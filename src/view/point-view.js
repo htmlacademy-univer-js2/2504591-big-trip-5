@@ -1,7 +1,7 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { capitalizeString, getDurationTime, humanizeDate } from '../utls.js';
 
-function createPointsTemplate(pointModel,iterator){
+function createPointsTemplate(pointModel,offerModel,destinationModel){
   const {
     base_price: price,
     date_from: dateFrom,
@@ -10,13 +10,13 @@ function createPointsTemplate(pointModel,iterator){
     is_favorite: isFavorite,
     offers: offersId,
     type
-  } = pointModel.points[iterator];
+  } = pointModel;
 
   const pointOffers = [];
   for(const offerId of offersId){
-    pointOffers.push(pointModel.getOfferById(type,offerId));
+    pointOffers.push(offerModel.getOfferById(type,offerId));
   }
-  const {name} = pointModel.getDestinationById(destinationId);
+  const {name} = destinationModel.getDestinationById(destinationId);
   const date = humanizeDate(dateFrom);
   return `
             <li class="trip-events__item">
@@ -61,25 +61,22 @@ function createPointsTemplate(pointModel,iterator){
 `;
 }
 
-export default class Point{
+export default class Point extends AbstractView{
+  #pointModel;
+  #offerModel;
+  #destinationModel;
+  #rollupButton;
 
-  constructor(model,i){
-    this.pointModel = model;
-    this.iterator = i;
+  constructor(pointModel,offerModel,destinationModel,onButtonClick){
+    super();
+    this.#pointModel = pointModel;
+    this.#offerModel = offerModel;
+    this.#destinationModel = destinationModel;
+    this.#rollupButton = this.element.querySelector('.event__rollup-btn');
+    this.#rollupButton.addEventListener('click',onButtonClick);
   }
 
-  getTemplate(){
-    return createPointsTemplate(this.pointModel,this.iterator);
-  }
-
-  getElement(){
-    if(!this.element){
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement(){
-    this.element = null;
+  get template(){
+    return createPointsTemplate(this.#pointModel,this.#offerModel,this.#destinationModel);
   }
 }
