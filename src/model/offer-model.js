@@ -5,7 +5,7 @@ const FIRST_ELEMENT = 0;
 export default class OfferModel{
   #offers = mockOffers;
 
-  getOffers(){
+  get offers(){
     return this.#offers;
   }
 

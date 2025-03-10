@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { capitalizeString, humanizeDate, getOfferKeyword } from '../utls.js';
+import { capitalizeString, humanizeDate, getOfferKeyword } from '../utils/utls.js';
 
 function createFormTemplate(pointModel,offerModel,destinationModel){
   const {
@@ -172,9 +172,10 @@ export default class EditForm extends AbstractView{
     this.#offerModel = offerModel;
     this.#destinationModel = destinationModel;
     this.#editForm = this.element.querySelector('.event--edit');
-    this.closeButton = this.element.querySelector('.event__rollup-btn');
-    this.closeButton.addEventListener('click', onEditButtonClick);
-    this.#editForm.addEventListener('submit', this.#onFormSubmit = onFormSubmit);
+    this.#closeButton = this.element.querySelector('.event__rollup-btn');
+    this.#closeButton.addEventListener('click', onEditButtonClick);
+    this.#onFormSubmit = onFormSubmit;
+    this.#editForm.addEventListener('submit', this.#onFormSubmit);
   }
 
   get template(){
