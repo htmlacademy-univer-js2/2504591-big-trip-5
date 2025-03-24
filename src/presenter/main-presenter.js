@@ -1,6 +1,4 @@
 import { render, replace } from '../framework/render';
-// import { getRandomInteger } from '../utls';
-// import CreateForm from '../view/create-form-view';
 import EditForm from '../view/edit-form-view';
 import Point from '../view/point-view';
 import flatpickr from 'flatpickr';
@@ -24,9 +22,8 @@ export default class MainPresenter{
   }
 
   init(){
-    // render(new CreateForm(),this.container);
-    for(let i = 0; i < this.pointModel.getPoints().length; i++){
-      this.#renderPoint(this.pointModel.getPoints()[i]);
+    for(let i = 0; i < this.pointModel.points.length; i++){
+      this.#renderPoint(this.pointModel.points[i]);
     }
     flatpickr('#event-start-time-1', {
       enableTime: true,

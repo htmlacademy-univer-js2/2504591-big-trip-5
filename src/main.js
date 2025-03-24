@@ -1,17 +1,25 @@
 import { render } from './framework/render.js';
 import Sort from './view/sort-view.js';
+import EmptyList from './view/empty-list-view';
 import Filter from './view/filter-view.js';
 import MainPresenter from './presenter/main-presenter.js';
 import PointModel from './model/point-model.js';
 import OfferModel from './model/offer-model.js';
 import DestinationModel from './model/destination-model.js';
+import { generateFilters } from './mock/filter.js';
 
 
 const siteHeaderFiltersElement = document.querySelector('.trip-controls__filters');
 const siteBodySortElement = document.querySelector('.trip-events');
-render(new Filter(), siteHeaderFiltersElement);
-render(new Sort(),siteBodySortElement);
-const mainPresenter = new MainPresenter(siteBodySortElement,
-  new PointModel(),new OfferModel(), new DestinationModel());
-mainPresenter.init();
+const filter = generateFilters(new PointModel().points);
+render(new Filter(filter), siteHeaderFiltersElement);
+if(filter[0].count === 0){
+  render(new EmptyList(),siteBodySortElement);
+} else{
+  render(new Sort(),siteBodySortElement);
+  const mainPresenter = new MainPresenter(siteBodySortElement,
+    new PointModel(),new OfferModel(), new DestinationModel());
+  mainPresenter.init();
+}
+
 

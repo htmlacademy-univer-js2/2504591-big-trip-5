@@ -39,4 +39,24 @@ function getOfferKeyword(title){
   return title.split(' ').slice(-1);
 }
 
-export {getRandomInteger, humanizeDate, getDurationTime,capitalizeString,getOfferKeyword};
+function isPresentPoint(dateFrom,dateTo) {
+  return dateFrom && dateTo && !dayjs().isAfter(dateTo, 'D') && !dayjs().isBefore(dateFrom, 'D');
+}
+
+function isPastPoint(dueDate) {
+  return dueDate && dayjs().isAfter(dueDate, 'D');
+}
+
+function isFuturePoint(dueDate) {
+  return dueDate && dayjs().isBefore(dueDate, 'D');
+}
+
+export {
+  getRandomInteger,
+  humanizeDate,
+  getDurationTime,
+  capitalizeString,
+  getOfferKeyword,
+  isPresentPoint,
+  isFuturePoint,
+  isPastPoint};
