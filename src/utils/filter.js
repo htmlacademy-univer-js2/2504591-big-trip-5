@@ -4,13 +4,13 @@ import { isFuturePoint, isPastPoint, isPresentPoint } from './utls';
 const filter = {
   [filterType.EVERYTHING]: (points)=> points,
   [filterType.FUTURE]: (points)=> points.filter((point)=>
-    isFuturePoint(point.date_from)
+    isFuturePoint(point.dateFrom)
   ),
   [filterType.PRESENT]: (points)=> points.filter((point)=>
-    isPresentPoint(point.date_from, point.date_to)
+    isPresentPoint(point.dateFrom, point.dateTo)
   ),
   [filterType.PAST]: (points)=> points.filter((point)=>
-    isPastPoint(point.date_to)
+    isPastPoint(point.dateTo)
   )
 };
 

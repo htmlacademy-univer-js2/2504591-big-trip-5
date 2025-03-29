@@ -3,21 +3,21 @@ import { capitalizeString, humanizeDate, getOfferKeyword } from '../utils/utls.j
 
 function createFormTemplate(pointModel,offerModel,destinationModel){
   const {
-    base_price: price,
-    date_from: dateFrom,
-    date_to: dateTo,
-    destination: destinationId,
-    offers: offersId,
+    basePrice,
+    dateFrom,
+    dateTo,
+    destination,
+    offers,
     type
   } = pointModel;
 
   const pointOffers = [];
-  for(const offerId of offersId){
+  for(const offerId of offers){
     pointOffers.push(offerModel.getOfferById(type,offerId));
   }
 
   const allOffers = offerModel.getOfferByType(type);
-  const {name, description, pictures} = destinationModel.getDestinationById(destinationId);
+  const {name, description, pictures} = destinationModel.getDestinationById(destination);
   return `
             <li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
@@ -108,7 +108,7 @@ function createFormTemplate(pointModel,offerModel,destinationModel){
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -175,7 +175,7 @@ export default class EditForm extends AbstractView{
     this.#closeButton = this.element.querySelector('.event__rollup-btn');
     this.#closeButton.addEventListener('click', onEditButtonClick);
     this.#onFormSubmit = onFormSubmit;
-    this.#editForm.addEventListener('submit', this.#onFormSubmit);
+    this.#editForm.addEventListener('submit', (evt)=>this.#onFormSubmit(evt, this.#pointModel));
   }
 
   get template(){
