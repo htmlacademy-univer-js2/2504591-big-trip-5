@@ -3,20 +3,20 @@ import { capitalizeString, getDurationTime, humanizeDate } from '../utils/utls.j
 
 function createPointsTemplate(pointModel,offerModel,destinationModel){
   const {
-    base_price: price,
-    date_from: dateFrom,
-    date_to: dateTo,
-    destination: destinationId,
-    is_favorite: isFavorite,
-    offers: offersId,
+    basePrice,
+    dateFrom,
+    dateTo,
+    destination,
+    isFavorite,
+    offers,
     type
   } = pointModel;
 
   const pointOffers = [];
-  for(const offerId of offersId){
+  for(const offerId of offers){
     pointOffers.push(offerModel.getOfferById(type,offerId));
   }
-  const {name} = destinationModel.getDestinationById(destinationId);
+  const {name} = destinationModel.getDestinationById(destination);
   const date = humanizeDate(dateFrom);
   return `
             <li class="trip-events__item">
@@ -35,7 +35,7 @@ function createPointsTemplate(pointModel,offerModel,destinationModel){
                   <p class="event__duration">${getDurationTime(dateFrom,dateTo)}</p>
                 </div>
                 <p class="event__price">
-                  &euro;&nbsp;<span class="event__price-value">${price}</span>
+                  &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
                 </p>
                 <h4 class="visually-hidden">Offers:</h4>
                 <ul class="event__selected-offers">
@@ -62,21 +62,25 @@ function createPointsTemplate(pointModel,offerModel,destinationModel){
 }
 
 export default class Point extends AbstractView{
-  #pointModel;
+  pointModel;
   #offerModel;
   #destinationModel;
   #rollupButton;
+  #favoriteButton;
 
-  constructor(pointModel,offerModel,destinationModel,onButtonClick){
+  constructor(pointModel,offerModel,destinationModel,onEditButtonClick,onFavoriteButtonClick){
     super();
-    this.#pointModel = pointModel;
+    this.pointModel = pointModel;
     this.#offerModel = offerModel;
     this.#destinationModel = destinationModel;
     this.#rollupButton = this.element.querySelector('.event__rollup-btn');
-    this.#rollupButton.addEventListener('click',onButtonClick);
+    this.#favoriteButton = this.element.querySelector('.event__favorite-btn');
+    this.#rollupButton.addEventListener('click',onEditButtonClick);
+    this.#favoriteButton.addEventListener('click',()=>
+      onFavoriteButtonClick({...this.pointModel,isFavorite:!this.pointModel.isFavorite}));
   }
 
   get template(){
-    return createPointsTemplate(this.#pointModel,this.#offerModel,this.#destinationModel);
+    return createPointsTemplate(this.pointModel,this.#offerModel,this.#destinationModel);
   }
 }

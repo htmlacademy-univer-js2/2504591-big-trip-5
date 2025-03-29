@@ -3,7 +3,7 @@ const mockPoints = [
     'id': '18354941-b6e7-4b3a-8018-f37535953ee2',
     'base_price': 7525,
     'date_from': '2025-02-10T01:54:14.857Z',
-    'date_to': '2026-02-10T18:13:14.857Z',
+    'date_to': '2025-02-10T18:13:14.857Z',
     'destination': '9a6007b0-5264-4c36-8a88-6922b41eec3c',
     'is_favorite': false,
     'offers': [],
