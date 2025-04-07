@@ -2,6 +2,10 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import PointPresenter from './point-presenter';
 import { updateItem } from '../utils/common';
+import { render, RenderPosition } from '../framework/render';
+import SortView from '../view/sort-view';
+import { SortType } from '../const';
+import { sortPointByDay, sortPointByTime } from '../utils/utls';
 
 export default class MainPresenter{
   #pointModel;
@@ -10,6 +14,8 @@ export default class MainPresenter{
   #container;
   #listPoints = [];
   #pointsPresenters = new Map();
+  #sortComponent = null;
+  #actualSortType = SortType.DAY;
 
   constructor(container, pointModel,offerModel,destinationModel){
     const tripEventsList = document.createElement('ul');
@@ -22,10 +28,9 @@ export default class MainPresenter{
   }
 
   init(){
+    this.#renderSort();
     this.#listPoints = [...this.#pointModel.points];
-    for(let i = 0; i < this.pointModel.points.length; i++){
-      this.#renderPoint(this.pointModel.points[i]);
-    }
+    this.#renderPointsList();
     flatpickr('#event-start-time-1', {
       enableTime: true,
       dateFormat: 'd/m/y H:i',
@@ -38,14 +43,40 @@ export default class MainPresenter{
 
   }
 
-  #renderPoint(pointData){
-    const pointPresenter = new PointPresenter(this.container,this.offerModel,
-      this.destinationModel,this.#handlePointChange,this.#onModeChange);
-    pointPresenter.init(pointData);
-    this.#pointsPresenters.set(pointData.id,pointPresenter);
+  #handleSortTypeChange = (changeSortType) => {
+    if(changeSortType !== this.#actualSortType){
+      switch(changeSortType){
+        case SortType.DAY:
+          this.#listPoints.sort(sortPointByDay);
+          break;
+        case SortType.TIME:
+          this.#listPoints.sort(sortPointByTime);
+          break;
+        case SortType.PRICE:
+          this.#listPoints.sort((a,b)=>b.basePrice - a.basePrice);
+          break;
+      }
+      this.#actualSortType = changeSortType;
+      this.#clearPointsList();
+      this.#renderPointsList();
+    }
+  };
+
+  #renderSort(){
+    this.#sortComponent = new SortView({onSortTypeChange: this.#handleSortTypeChange});
+    render(this.#sortComponent,this.#container,RenderPosition.AFTERBEGIN);
   }
 
-  #clearPointsPresenters(){
+  #renderPointsList(){
+    for(let i = 0; i < this.#listPoints.length; i++){
+      const pointPresenter = new PointPresenter(this.container,this.offerModel,
+        this.destinationModel,this.#handlePointChange,this.#onModeChange);
+      pointPresenter.init(this.#listPoints[i]);
+      this.#pointsPresenters.set(this.#listPoints[i].id,pointPresenter);
+    }
+  }
+
+  #clearPointsList(){
     this.#pointsPresenters.forEach((pointPresenter)=>pointPresenter.destroy());
     this.#pointsPresenters.clear();
   }

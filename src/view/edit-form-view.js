@@ -158,7 +158,7 @@ function createFormTemplate(pointModel,offerModel,destinationModel){
   `;
 }
 
-export default class EditForm extends AbstractView{
+export default class EditFormView extends AbstractView{
   #pointModel;
   #offerModel;
   #destinationModel;
