@@ -1,6 +1,6 @@
 import { render, replace,remove } from '../framework/render';
-import EditForm from '../view/edit-form-view';
-import Point from '../view/point-view';
+import EditFormView from '../view/edit-form-view';
+import PointView from '../view/point-view';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -31,9 +31,9 @@ export default class PointPresenter{
     const prevPointComponent = this.#pointComponent;
     const prevEditPointComponent = this.#editPointComponent;
 
-    this.#pointComponent = new Point(this.#pointModel,this.#offerModel,this.#destinationModel,
+    this.#pointComponent = new PointView(this.#pointModel,this.#offerModel,this.#destinationModel,
       this.#onPointButtonClick,this.#handlePointChange);
-    this.#editPointComponent = new EditForm(this.#pointModel,this.#offerModel,this.#destinationModel,
+    this.#editPointComponent = new EditFormView(this.#pointModel,this.#offerModel,this.#destinationModel,
       this.#onFormSubmit,this.#onEditButtonClick);
 
     if(prevPointComponent === null || prevEditPointComponent === null){

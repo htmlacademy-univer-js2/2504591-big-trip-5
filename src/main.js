@@ -1,6 +1,5 @@
 import { render } from './framework/render.js';
-import Sort from './view/sort-view.js';
-import EmptyList from './view/empty-list-view';
+import EmptyListView from './view/empty-list-view';
 import Filter from './view/filter-view.js';
 import MainPresenter from './presenter/list-presenter.js';
 import PointModel from './model/point-model.js';
@@ -14,9 +13,8 @@ const siteBodySortElement = document.querySelector('.trip-events');
 const filter = generateFilters(new PointModel().points);
 render(new Filter(filter), siteHeaderFiltersElement);
 if(filter[0].count === 0){
-  render(new EmptyList(),siteBodySortElement);
+  render(new EmptyListView(),siteBodySortElement);
 } else{
-  render(new Sort(),siteBodySortElement);
   const mainPresenter = new MainPresenter(siteBodySortElement,
     new PointModel(),new OfferModel(), new DestinationModel());
   mainPresenter.init();
