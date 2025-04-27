@@ -128,10 +128,6 @@ const mockDestinations = [
         'src': 'https://24.objects.htmlacademy.pro/static/destinations/16.jpg',
         'description': 'Kioto with an embankment of a mighty river as a centre of attraction'
       },
-      {
-        'src': 'https://24.objects.htmlacademy.pro/static /destinations/19.jpg',
-        'description': 'Kioto is a beautiful city'
-      }
     ]
   },
   {
