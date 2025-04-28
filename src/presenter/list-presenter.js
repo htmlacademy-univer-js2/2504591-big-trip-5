@@ -1,5 +1,3 @@
-import flatpickr from 'flatpickr';
-import 'flatpickr/dist/flatpickr.min.css';
 import PointPresenter from './point-presenter';
 import { updateItem } from '../utils/common';
 import { render, RenderPosition } from '../framework/render';
@@ -31,16 +29,6 @@ export default class MainPresenter{
     this.#renderSort();
     this.#listPoints = [...this.#pointModel.points];
     this.#renderPointsList();
-    flatpickr('#event-start-time-1', {
-      enableTime: true,
-      dateFormat: 'd/m/y H:i',
-    });
-
-    flatpickr('#event-end-time-1', {
-      enableTime: true,
-      dateFormat: 'd/m/y H:i',
-    });
-
   }
 
   #handleSortTypeChange = (changeSortType) => {

@@ -15,6 +15,6 @@ export default class OfferModel{
   }
 
   getOfferByType(type){
-    return this.#offers.filter((offer)=> offer.type === type)[FIRST_ELEMENT];
+    return this.#offers.filter((offer) => offer.type === type).map((offer) => offer.offers).flat();
   }
 }
