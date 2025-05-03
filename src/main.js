@@ -12,6 +12,7 @@ const siteHeaderFiltersElement = document.querySelector('.trip-controls__filters
 const siteBodySortElement = document.querySelector('.trip-events');
 const filter = generateFilters(new PointModel().points);
 render(new Filter(filter), siteHeaderFiltersElement);
+
 if(filter[0].count === 0){
   render(new EmptyListView(),siteBodySortElement);
 } else{
