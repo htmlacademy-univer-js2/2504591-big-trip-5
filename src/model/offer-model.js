@@ -1,20 +1,44 @@
-import { mockOffers } from '../mock/offer';
+import { UpdateType } from '../const';
+import Observable from '../framework/observable';
 
 const FIRST_ELEMENT = 0;
 
-export default class OfferModel{
-  #offers = mockOffers;
+export default class OfferModel extends Observable {
+  #offers = [];
+  #offersApiService;
+  #isLoaded = false;
 
-  get offers(){
+  constructor(offersApiService) {
+    super();
+    this.#offersApiService = offersApiService;
+  }
+
+  async init() {
+    try {
+      this.#offers = await this.#offersApiService.offers;
+    } catch (err) {
+      this.#offers = [];
+    }
+    this.#isLoaded = true;
+    this._notify(UpdateType.INIT);
+  }
+
+  get offers() {
     return this.#offers;
   }
 
-  getOfferById(type, id){
-    return this.#offers.filter((offer)=> offer.type === type)[FIRST_ELEMENT]
-      .offers.find((item)=>item.id === id);
+  get isLoaded() {
+    return this.#isLoaded;
   }
 
-  getOfferByType(type){
+  getOfferById(type, id) {
+    if (this.#offers.length === 0) {
+      return;
+    }
+    return this.#offers.filter((offer) => offer.type === type)[FIRST_ELEMENT].offers.find((item) => item.id === id);
+  }
+
+  getOfferByType(type) {
     return this.#offers.filter((offer) => offer.type === type).map((offer) => offer.offers).flat();
   }
 }
