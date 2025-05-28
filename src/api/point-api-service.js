@@ -55,7 +55,6 @@ export default class PointsApiService extends ApiService {
       'destination': point.destination.toString()
     };
 
-    // Ненужные ключи мы удаляем
     delete adaptedTask.dateTo;
     delete adaptedTask.dateFrom;
     delete adaptedTask.basePrice;

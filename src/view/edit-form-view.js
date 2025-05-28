@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { capitalizeString, humanizeDate, getOfferKeyword } from '../utils/utls.js';
+import { capitalizeString, humanizeDate } from '../utils/utls.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import he from 'he';
@@ -22,6 +22,8 @@ function createFormTemplate(state, offerModel, destinationModel, isNewPoint) {
   }
 
   const allOffers = offerModel.getOfferByType(type);
+  const availableOfferIds = allOffers.map((offer) => offer.id);
+  const filteredOffers = offers.filter((id) => availableOfferIds.includes(id));
   const { name, description, pictures } = destinationModel.getDestinationById(destination);
   const deleteText = isDeleting ? 'Deleting...' : 'Delete';
   return `
@@ -126,23 +128,21 @@ function createFormTemplate(state, offerModel, destinationModel, isNewPoint) {
                   <section class="event__section  event__section--offers">
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
                     <div class="event__available-offers">
-                    ${allOffers.map((offer) => {
-    const keyword = getOfferKeyword(offer.title);
-    return `
+                    ${allOffers.map((offer) => `
                       <div class="event__offer-selector">
                         <input class="event__offer-checkbox visually-hidden"
-                         id="event-offer-${keyword}-1"
-                         type="checkbox"
-                         name="event-offer-${keyword}"
-                         ${pointOffers.includes(offer) && 'checked'}
-                         data-offer-id="${offer.id}" ${isDisabled ? 'disabled' : ''}>
-                        <label class="event__offer-label" for="event-offer-${keyword}-1">
+                        id="event-offer-${offer.id}-1"
+                        type="checkbox"
+                        name="event-offer-${offer.id}"
+                        ${filteredOffers.includes(offer.id) ? 'checked' : ''}
+                        data-offer-id="${offer.id}" ${isDisabled ? 'disabled' : ''}>
+                        <label class="event__offer-label" for="event-offer-${offer.id}-1">
                           <span class="event__offer-title">${offer.title}</span>
                           &plus;&euro;&nbsp;
                           <span class="event__offer-price">${offer.price}</span>
                         </label>
-                      </div>`;
-  }).join('')}
+                      </div>
+                    `).join('')}
                     </div>
                   </section>` : ''}
                   ${(description || pictures?.length > 0) ? `
@@ -175,9 +175,11 @@ export default class EditFormView extends AbstractStatefulView {
   #datepickerStart;
   #datepickerEnd;
   #isNewPoint = false;
+  #initialPoint;
 
   constructor(pointModel, offerModel, destinationModel, onFormSubmit, onDeletePoint, onEditButtonClick) {
     super();
+    this.#initialPoint = { ...pointModel };
     this._setState(this.parsePointToState(pointModel));
     this.#allOffers = offerModel;
     this.#allDestination = destinationModel;
@@ -254,7 +256,7 @@ export default class EditFormView extends AbstractStatefulView {
   };
 
   #onOfferChange = (evt) => {
-    const offerId = evt.target.dataset.offerId;
+    const offerId = Number(evt.target.dataset.offerId);
     const newOffers = evt.target.checked
       ? [...this._state.offers, offerId]
       : this._state.offers.filter((id) => id !== offerId);
@@ -262,6 +264,7 @@ export default class EditFormView extends AbstractStatefulView {
       offers: newOffers
     });
   };
+
 
   #onFormStateSubmit = (evt) => {
     evt.preventDefault();
@@ -290,7 +293,11 @@ export default class EditFormView extends AbstractStatefulView {
 
   #onDeleteStateButton = (evt) => {
     evt.preventDefault();
-    this.#onDeletePoint(EditFormView.parseStateToPoint(this._state));
+    if (this.#isNewPoint) {
+      this.#onDeletePoint(EditFormView.parseStateToPoint(this._state));
+    } else {
+      this.updateElement(this.parsePointToState(this.#initialPoint));
+    }
   };
 
   parsePointToState(point) {
