@@ -1,6 +1,7 @@
 import { render, RenderPosition, replace } from '../framework/render.js';
 import RouteView from '../view/route-view.js';
 
+const CITY_MAX_COUNT = 3;
 const generateRouteTitle = (points, destinationModel) => {
   if (points.length === 0) {
     return '';
@@ -10,7 +11,7 @@ const generateRouteTitle = (points, destinationModel) => {
     const destination = destinationModel.getDestinationById(point.destination);
     return destination && destination.name ? destination.name : point.destination;
   });
-  return cities.length > 3
+  return cities.length > CITY_MAX_COUNT
     ? `${cities[0]} — … — ${cities[cities.length - 1]}`
     : cities.join(' — ');
 };
