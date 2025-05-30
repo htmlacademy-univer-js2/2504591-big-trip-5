@@ -224,9 +224,7 @@ export default class EditFormView extends AbstractStatefulView {
       enableTime: true,
       dateFormat: 'd/m/y H:i',
       onChange: (selectedDates) => {
-        if (selectedDates[0] < new Date(this._state.dateTo)) {
-          this._setState({ dateFrom: selectedDates[0].toISOString() });
-        }
+        this._setState({ dateFrom: selectedDates[0].toISOString() });
       }
     });
   };
@@ -239,24 +237,22 @@ export default class EditFormView extends AbstractStatefulView {
       enableTime: true,
       dateFormat: 'd/m/y H:i',
       onChange: (selectedDates) => {
-        if (selectedDates[0] > new Date(this._state.dateFrom)) {
-          this._setState({ dateTo: selectedDates[0].toISOString() });
-        }
+        this._setState({ dateTo: selectedDates[0].toISOString() });
       }
     });
   };
 
+
   #onPriceInput = (evt) => {
     const price = parseInt(evt.target.value, 10);
-    if (!isNaN(price) && price > 0) {
-      this._setState({
-        basePrice: price
-      });
-    }
+    this._setState({
+      basePrice: price
+    });
   };
 
+
   #onOfferChange = (evt) => {
-    const offerId = Number(evt.target.dataset.offerId);
+    const offerId = evt.target.dataset.offerId;
     const newOffers = evt.target.checked
       ? [...this._state.offers, offerId]
       : this._state.offers.filter((id) => id !== offerId);
@@ -268,8 +264,15 @@ export default class EditFormView extends AbstractStatefulView {
 
   #onFormStateSubmit = (evt) => {
     evt.preventDefault();
-    this.#onFormSubmit(evt, EditFormView.parseStateToPoint(this._state));
+    const point = EditFormView.parseStateToPoint(this._state);
+    if (isNaN(point.basePrice) || point.basePrice <= 0 || !this._state.dateTo || !this._state.dateFrom
+      || new Date(this._state.dateFrom) >= new Date(this._state.dateTo) || !point.destination) {
+      this.shake();
+      return;
+    }
+    this.#onFormSubmit(evt, point);
   };
+
 
   #onCityChange = (evt) => {
     const city = evt.target.value;
@@ -277,6 +280,10 @@ export default class EditFormView extends AbstractStatefulView {
     if (newDestination) {
       this.updateElement({
         destination: newDestination
+      });
+    } else {
+      this.updateElement({
+        destination: null
       });
     }
   };
@@ -294,11 +301,16 @@ export default class EditFormView extends AbstractStatefulView {
   #onDeleteStateButton = (evt) => {
     evt.preventDefault();
     if (this.#isNewPoint) {
-      this.#onDeletePoint(EditFormView.parseStateToPoint(this._state));
+      this.#onDeletePoint();
+
     } else {
-      this.updateElement(this.parsePointToState(this.#initialPoint));
+      this.#onDeletePoint(EditFormView.parseStateToPoint(this._state));
     }
   };
+
+  resetToInitialState() {
+    this.updateElement(this.parsePointToState(this.#initialPoint));
+  }
 
   parsePointToState(point) {
     return {
