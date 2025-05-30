@@ -11,6 +11,14 @@ export default class DestinationModel extends Observable {
     this.#destinationsApiService = destinationsApiService;
   }
 
+  get destinations() {
+    return this.#destinations;
+  }
+
+  get isLoaded() {
+    return this.#isLoaded;
+  }
+
   async init() {
     try {
       this.#destinations = await this.#destinationsApiService.destinations;
@@ -19,14 +27,6 @@ export default class DestinationModel extends Observable {
     }
     this.#isLoaded = true;
     this._notify(UpdateType.INIT);
-  }
-
-  get destinations() {
-    return this.#destinations;
-  }
-
-  get isLoaded() {
-    return this.#isLoaded;
   }
 
   getDestinationById(id) {
