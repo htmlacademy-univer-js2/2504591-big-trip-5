@@ -55,6 +55,13 @@ function isDatesEqual(dateA, dateB) {
   return (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
 }
 
+function OnEscKeyDown(evt, callback) {
+  if (evt.key === 'Escape' || evt.key === 'Esc') {
+    evt.preventDefault();
+    callback();
+  }
+}
+
 export {
   humanizeDate,
   getDurationTime,
@@ -65,4 +72,5 @@ export {
   sortPointByDay,
   sortPointByTime,
   isDatesEqual,
+  OnEscKeyDown
 };

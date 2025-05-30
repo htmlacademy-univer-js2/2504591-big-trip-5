@@ -2,7 +2,7 @@ import { render, replace, remove } from '../framework/render';
 import EditFormView from '../view/edit-form-view';
 import PointView from '../view/point-view';
 import { UserAction, UpdateType } from '../const.js';
-import { isDatesEqual } from '../utils/utls.js';
+import { isDatesEqual, OnEscKeyDown } from '../utils/utls.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -119,16 +119,14 @@ export default class PointPresenter {
   }
 
   #replaceFormToCard() {
+    this.#pointEditComponent.resetToInitialState();
     replace(this.#pointComponent, this.#pointEditComponent);
     document.removeEventListener('keydown', this.#onEscKeyDown);
     this.#mode = Mode.DEFAULT;
   }
 
   #onEscKeyDown = (evt) => {
-    if (evt.key === 'Escape') {
-      evt.preventDefault();
-      this.#replaceFormToCard();
-    }
+    OnEscKeyDown(evt, this.#replaceFormToCard.bind(this));
   };
 
   #onPointButtonClick = () => {

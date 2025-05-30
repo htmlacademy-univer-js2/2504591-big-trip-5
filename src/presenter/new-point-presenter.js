@@ -1,6 +1,7 @@
 import { remove, render, RenderPosition } from '../framework/render.js';
 import { UserAction, UpdateType } from '../const.js';
 import EditFormView from '../view/edit-form-view.js';
+import { OnEscKeyDown } from '../utils/utls.js';
 
 export default class NewPointPresenter {
   #pointListContainer = null;
@@ -21,9 +22,9 @@ export default class NewPointPresenter {
     }
     const blankPoint = {
       basePrice: 0,
-      dateFrom: new Date().toISOString(),
-      dateTo: new Date().toISOString(),
-      destination: 1,
+      dateFrom: '',
+      dateTo: '',
+      destination: '',
       offers: [],
       type: 'flight',
       isFavorite: false
@@ -87,9 +88,6 @@ export default class NewPointPresenter {
   };
 
   #onEscKeyDown = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      this.destroy();
-    }
+    OnEscKeyDown(evt, this.destroy.bind(this));
   };
 }
